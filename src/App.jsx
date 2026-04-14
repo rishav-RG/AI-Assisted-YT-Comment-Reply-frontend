@@ -3,7 +3,7 @@ import {
   SignedOut,
   UserButton
 } from "@clerk/clerk-react";
-import { NavLink, Navigate, Route, Routes } from "react-router-dom";
+import { NavLink, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/DashboardPage";
@@ -26,6 +26,9 @@ const navItems = [
 ];
 
 function Shell() {
+  const location = useLocation();
+  const fromPath = `${location.pathname}${location.search}`;
+
   return (
     <div className="app-shell">
       <div className="aurora aurora-a" aria-hidden />
@@ -43,10 +46,16 @@ function Shell() {
 
           <div className="auth-controls" aria-label="Authentication Controls">
             <SignedOut>
-              <NavLink className="btn ghost auth-btn" to="/sign-in">
+              <NavLink
+                className="btn ghost auth-btn"
+                to={`/sign-in?from=${encodeURIComponent(fromPath)}`}
+              >
                 Log in
               </NavLink>
-              <NavLink className="btn auth-btn" to="/sign-up">
+              <NavLink
+                className="btn auth-btn"
+                to={`/sign-up?from=${encodeURIComponent(fromPath)}`}
+              >
                 Sign up
               </NavLink>
             </SignedOut>

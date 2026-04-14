@@ -29,6 +29,16 @@ body {
   min-height: 100vh;
 }
 
+body.auth-screen-open {
+  overflow: hidden;
+}
+
+body.auth-screen-open .app-shell {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
+
 a {
   color: inherit;
 }
@@ -328,10 +338,32 @@ h1 {
 }
 
 .clerk-route-page {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
   display: grid;
   place-items: center;
-  padding: 0.5rem;
-  min-height: 58vh;
+  padding: 1.1rem;
+  background: rgba(21, 30, 43, 0.34);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.clerk-route-page .cl-rootBox,
+.clerk-route-page .cl-cardBox {
+  width: min(100%, 440px);
+  cursor: auto;
+}
+
+.clerk-route-page .cl-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.clerk-route-page .cl-footerActionLink {
+  color: var(--accent);
 }
 
 .page-header h2 {
