@@ -14,6 +14,7 @@ import GenerateVideoPage from "./pages/GenerateVideoPage";
 import GenerateCommentPage from "./pages/GenerateCommentPage";
 import ActivityPage from "./pages/ActivityPage";
 import OAuthCallbackPage from "./pages/OAuthCallbackPage";
+import VideoDetailPage from "./pages/VideoDetailPage";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import { AppStateProvider } from "./state/AppStateProvider";
@@ -206,6 +207,14 @@ function AppContent() {
               element={(
                 <ProtectedRoute>
                   <OAuthCallbackPage />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/videos/:videoId"
+              element={(
+                <ProtectedRoute>
+                  <VideoDetailPage />
                 </ProtectedRoute>
               )}
             />
