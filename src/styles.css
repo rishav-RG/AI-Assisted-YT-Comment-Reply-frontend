@@ -15,6 +15,21 @@
   --shadow: 0 22px 44px rgba(15, 25, 40, 0.12);
 }
 
+body[data-theme="dark"] {
+  --bg: #0b111a;
+  --surface: rgba(12, 18, 28, 0.86);
+  --surface-strong: #0f1722;
+  --ink: #f2f5ff;
+  --muted: #9fb0c8;
+  --line: #263246;
+  --accent: #4bb3ff;
+  --accent-2: #49d2b4;
+  --ok: #48c08c;
+  --warn: #f0a14a;
+  --err: #ff6b6b;
+  --shadow: 0 22px 44px rgba(5, 10, 18, 0.45);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -27,6 +42,24 @@ body {
     radial-gradient(circle at 15% 0%, #fbe8cf 0%, transparent 45%),
     radial-gradient(circle at 95% 5%, #c7e8e5 0%, transparent 38%), var(--bg);
   min-height: 100vh;
+  transition:
+    background 240ms ease,
+    color 240ms ease;
+}
+
+body[data-theme="dark"] {
+  background:
+    radial-gradient(
+      circle at 12% 6%,
+      rgba(35, 88, 168, 0.35) 0%,
+      transparent 48%
+    ),
+    radial-gradient(
+      circle at 92% 12%,
+      rgba(30, 150, 170, 0.25) 0%,
+      transparent 42%
+    ),
+    var(--bg);
 }
 
 body.auth-screen-open {
@@ -104,6 +137,63 @@ a {
   justify-content: flex-end;
   gap: 0.55rem;
   flex-wrap: wrap;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  color: var(--ink);
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition:
+    transform 140ms ease,
+    filter 140ms ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+.theme-toggle-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.theme-toggle-track {
+  position: relative;
+  width: 36px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(13, 107, 111, 0.18);
+  border: 1px solid var(--line);
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  transform: translateY(-50%);
+  background: var(--accent);
+  transition:
+    transform 180ms ease,
+    background 180ms ease;
+}
+
+body[data-theme="dark"] .theme-toggle-thumb {
+  transform: translate(16px, -50%);
+  background: var(--accent-2);
 }
 
 .auth-btn {
@@ -817,6 +907,101 @@ input:focus {
 .app-loading-subtitle {
   margin: 0.35rem 0 0;
   color: var(--muted);
+}
+
+body[data-theme="dark"] .aurora-a {
+  background: #1e6fb8;
+}
+
+body[data-theme="dark"] .aurora-b {
+  background: #1d8f7a;
+}
+
+body[data-theme="dark"] .app-header {
+  background: linear-gradient(
+    130deg,
+    rgba(15, 22, 33, 0.92),
+    rgba(12, 18, 28, 0.9)
+  );
+}
+
+body[data-theme="dark"] .auth-user-pill {
+  background: rgba(13, 18, 28, 0.9);
+}
+
+body[data-theme="dark"] .nav-link {
+  color: #c8d5e8;
+}
+
+body[data-theme="dark"] .nav-link:hover {
+  background: rgba(75, 179, 255, 0.14);
+}
+
+body[data-theme="dark"] .nav-link.active {
+  background: linear-gradient(
+    135deg,
+    rgba(75, 179, 255, 0.25),
+    rgba(73, 210, 180, 0.18)
+  );
+  color: #f0f6ff;
+}
+
+body[data-theme="dark"] .home-hero {
+  background: linear-gradient(145deg, #0f1722 0%, #0c1320 100%);
+}
+
+body[data-theme="dark"] .home-workflow {
+  background: linear-gradient(140deg, #0f1722, #0b121d);
+}
+
+body[data-theme="dark"] .home-workflow-step {
+  border-color: #243244;
+  background: #0f1722;
+}
+
+body[data-theme="dark"] .home-workflow-index {
+  border-color: rgba(75, 179, 255, 0.35);
+  background: rgba(75, 179, 255, 0.16);
+  color: #bfe6ff;
+}
+
+body[data-theme="dark"] .home-quick-card {
+  background: #0f1722;
+}
+
+body[data-theme="dark"] .home-quick-card:hover {
+  box-shadow: 0 10px 20px rgba(6, 12, 22, 0.4);
+  border-color: #2a3a4d;
+}
+
+body[data-theme="dark"] .clerk-route-page {
+  background: rgba(6, 10, 18, 0.6);
+}
+
+body[data-theme="dark"] .btn.ghost {
+  background: rgba(13, 18, 28, 0.9);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+body[data-theme="dark"] input[type="number"],
+body[data-theme="dark"] input[type="text"] {
+  background: #0f1722;
+  border-color: #263246;
+  color: var(--ink);
+}
+
+body[data-theme="dark"] .chip,
+body[data-theme="dark"] .stack-item,
+body[data-theme="dark"] .metric {
+  background: #0f1722;
+  border-color: #263246;
+}
+
+body[data-theme="dark"] .oauth-hint {
+  border-color: rgba(240, 161, 74, 0.4);
+  background: rgba(240, 161, 74, 0.12);
+  color: #f3c28b;
 }
 
 @keyframes app-loading-spin {

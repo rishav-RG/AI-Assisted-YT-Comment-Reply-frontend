@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   SignedIn,
   SignedOut,
@@ -52,6 +53,32 @@ function ProtectedRoute({ children }) {
 function AppContent() {
   const location = useLocation();
   const fromPath = `${location.pathname}${location.search}`;
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") {
+      return "light";
+    }
+
+    const stored = localStorage.getItem("yt-theme");
+    if (stored === "dark" || stored === "light") {
+      return stored;
+    }
+
+    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+    return prefersDark ? "dark" : "light";
+  });
+
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    document.body.dataset.theme = theme;
+    localStorage.setItem("yt-theme", theme);
+  }, [theme]);
+
+  const handleThemeToggle = () => {
+    setTheme((current) => (current === "dark" ? "light" : "dark"));
+  };
 
   return (
     <div className="app-shell">
@@ -90,6 +117,21 @@ function AppContent() {
                 <UserButton afterSignOutUrl="/sign-in" />
               </div>
             </SignedIn>
+
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={handleThemeToggle}
+              aria-pressed={theme === "dark"}
+              aria-label="Toggle dark theme"
+            >
+              <span className="theme-toggle-label">
+                {theme === "dark" ? "Dark" : "Light"}
+              </span>
+              <span className="theme-toggle-track" aria-hidden="true">
+                <span className="theme-toggle-thumb" />
+              </span>
+            </button>
           </div>
         </div>
       </header>
