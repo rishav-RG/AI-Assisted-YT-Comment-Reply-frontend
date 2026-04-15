@@ -158,6 +158,7 @@ function AppContent() {
                 <ProtectedRoute>
                   <DashboardPage />
                 </ProtectedRoute>
+
               )}
             />
             <Route
