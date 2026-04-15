@@ -15,9 +15,6 @@ export default function HomePage() {
                     <Link className="btn ghost" to="/overview">
                         Open Overview
                     </Link>
-                    <Link className="btn ghost" to="/sync">
-                        Start Sync
-                    </Link>
                     <Link className="btn ghost" to="/activity">
                         View Activity
                     </Link>
@@ -90,7 +87,7 @@ export default function HomePage() {
                         <span className="home-workflow-index">04</span>
                         <h4>Review Through Overview and Activity</h4>
                         <p>
-                            Final workflow visibility is provided through Overview, Sync, and Activity execution pages.
+                            Final workflow visibility is provided through the Overview workspace and Activity timeline.
                         </p>
                     </article>
                 </div>
@@ -99,14 +96,8 @@ export default function HomePage() {
             <section className="home-quick-grid" aria-label="Quick entry points">
                 <Link className="home-quick-card reveal" to="/overview">
                     <p className="home-quick-eyebrow">Overview</p>
-                    <h3>Check Backend Health and OAuth</h3>
-                    <p>Start with endpoint status, connectivity, and workflow readiness.</p>
-                </Link>
-
-                <Link className="home-quick-card reveal" to="/sync">
-                    <p className="home-quick-eyebrow">Sync</p>
-                    <h3>Ingest Channel Data</h3>
-                    <p>Sync latest creator content and optionally trigger immediate reply generation.</p>
+                    <h3>Explore Videos and Comment Threads</h3>
+                    <p>Sync channel data, browse videos, and jump into thread-level reply operations.</p>
                 </Link>
 
                 <Link className="home-quick-card reveal" to="/activity">

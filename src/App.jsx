@@ -9,9 +9,6 @@ import { NavLink, Navigate, Route, Routes, useLocation } from "react-router-dom"
 import AppLoader from "./components/AppLoader";
 import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/DashboardPage";
-import SyncPage from "./pages/SyncPage";
-import GenerateVideoPage from "./pages/GenerateVideoPage";
-import GenerateCommentPage from "./pages/GenerateCommentPage";
 import ActivityPage from "./pages/ActivityPage";
 import OAuthCallbackPage from "./pages/OAuthCallbackPage";
 import VideoDetailPage from "./pages/VideoDetailPage";
@@ -22,9 +19,6 @@ import { AppStateProvider } from "./state/AppStateProvider";
 const navItems = [
   { to: "/", label: "Home" },
   { to: "/overview", label: "Overview" },
-  { to: "/sync", label: "Sync" },
-  { to: "/generate/video", label: "Generate by Video" },
-  { to: "/generate/comment", label: "Generate by Comment" },
   { to: "/activity", label: "Activity" }
 ];
 
@@ -167,30 +161,6 @@ function AppContent() {
               element={(
                 <ProtectedRoute>
                   <DashboardPage />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/sync"
-              element={(
-                <ProtectedRoute>
-                  <SyncPage />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/generate/video"
-              element={(
-                <ProtectedRoute>
-                  <GenerateVideoPage />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/generate/comment"
-              element={(
-                <ProtectedRoute>
-                  <GenerateCommentPage />
                 </ProtectedRoute>
               )}
             />

@@ -17,7 +17,7 @@ async function request(path, options = {}) {
     method,
     body,
     headers: requestHeaders,
-    ...rest
+    ...rest,
   });
 
   const raw = await response.text();
@@ -30,7 +30,11 @@ async function request(path, options = {}) {
   }
 
   if (!response.ok) {
-    const detail = payload?.detail || payload?.message || response.statusText || "Request failed";
+    const detail =
+      payload?.detail ||
+      payload?.message ||
+      response.statusText ||
+      "Request failed";
     const error = new Error(detail);
     error.status = response.status;
     error.payload = payload;
@@ -41,31 +45,33 @@ async function request(path, options = {}) {
 }
 
 export const backendApi = {
-  getHealth: () => request("/"),
-
   getContentOverview: () => request("/content/overview"),
 
   getVideoDetail: (videoId) => request(`/content/videos/${videoId}`),
 
   syncVideoComments: (videoId) =>
     request(`/content/videos/${videoId}/sync-comments`, {
-      method: "POST"
+      method: "POST",
     }),
 
-  postReplyForComment: (commentId, { replyText = null, preferEditedReply = true } = {}) =>
+  postReplyForComment: (
+    commentId,
+    { replyText = null, preferEditedReply = true } = {},
+  ) =>
     request(`/content/comments/${commentId}/post-reply`, {
       method: "POST",
       body: JSON.stringify({
         reply_text: replyText,
-        prefer_edited_reply: preferEditedReply
-      })
+        prefer_edited_reply: preferEditedReply,
+      }),
     }),
 
-  completeOAuth: (code) => request(`/auth/callback?code=${encodeURIComponent(code)}`),
+  completeOAuth: (code) =>
+    request(`/auth/callback?code=${encodeURIComponent(code)}`),
 
   syncYoutube: ({ runRag = false } = {}) =>
     request(`/youtube/sync?run_rag=${runRag ? "true" : "false"}`, {
-      method: "POST"
+      method: "POST",
     }),
 
   generateForVideo: (videoId, { forceRegenerate = false, topK = null } = {}) =>
@@ -73,18 +79,19 @@ export const backendApi = {
       method: "POST",
       body: JSON.stringify({
         force_regenerate: forceRegenerate,
-        top_k: topK
-      })
+        top_k: topK,
+      }),
     }),
 
-  generateForComment: (commentId, { forceRegenerate = false, topK = null } = {}) =>
+  generateForComment: (
+    commentId,
+    { forceRegenerate = false, topK = null } = {},
+  ) =>
     request(`/rag/generate/comment/${commentId}`, {
       method: "POST",
       body: JSON.stringify({
         force_regenerate: forceRegenerate,
-        top_k: topK
-      })
-    })
+        top_k: topK,
+      }),
+    }),
 };
-
-export const oauthStartUrl = buildUrl("/auth/youtube");

@@ -537,16 +537,6 @@ h1 {
   color: var(--muted);
 }
 
-.oauth-hint {
-  margin-top: 0.75rem;
-  border: 1px dashed #d8bfa3;
-  border-radius: 10px;
-  background: #fff5e8;
-  color: #6a4d2d;
-  padding: 0.62rem 0.7rem;
-  font-size: 0.9rem;
-}
-
 .row {
   display: flex;
   align-items: center;
@@ -568,10 +558,6 @@ h1 {
   border-radius: 16px;
   padding: 1rem;
   background: linear-gradient(135deg, #fffefa 0%, #f8f5ee 100%);
-}
-
-.overview-ops-grid {
-  align-items: start;
 }
 
 .video-toolbar {
@@ -857,11 +843,6 @@ select:focus {
   border-color: #d8dbe2;
 }
 
-.form-grid {
-  display: grid;
-  gap: 0.75rem;
-}
-
 label {
   display: grid;
   gap: 0.35rem;
@@ -885,16 +866,6 @@ input[type="text"] {
 input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(13, 107, 111, 0.14);
-}
-
-.switch-row {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.switch-row input {
-  accent-color: var(--accent);
 }
 
 .chip-list {
@@ -1269,12 +1240,6 @@ body[data-theme="dark"] .stack-item,
 body[data-theme="dark"] .metric {
   background: #0f1722;
   border-color: #263246;
-}
-
-body[data-theme="dark"] .oauth-hint {
-  border-color: rgba(240, 161, 74, 0.4);
-  background: rgba(240, 161, 74, 0.12);
-  color: #f3c28b;
 }
 
 @keyframes app-loading-spin {

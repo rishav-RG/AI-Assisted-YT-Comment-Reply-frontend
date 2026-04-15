@@ -3,9 +3,8 @@ import { createContext, useContext, useMemo, useState } from "react";
 const STORAGE_KEY = "yt-reply-workflow-state-v1";
 
 const defaultState = {
-  connectedHint: false,
-  lastHealth: null,
-  lastSync: null,
+  overviewCache: null,
+  overviewCacheAt: null,
   history: []
 };
 
@@ -56,25 +55,11 @@ export function AppStateProvider({ children }) {
   const value = useMemo(
     () => ({
       state,
-      markConnected: (connected) => {
+      setOverviewCache: (overviewPayload) => {
         update((prev) => ({
           ...prev,
-          connectedHint: connected
-        }));
-      },
-      setHealthCheck: (health) => {
-        update((prev) => ({
-          ...prev,
-          lastHealth: {
-            ...health,
-            checkedAt: new Date().toISOString()
-          }
-        }));
-      },
-      setLastSync: (syncPayload) => {
-        update((prev) => ({
-          ...prev,
-          lastSync: syncPayload
+          overviewCache: overviewPayload,
+          overviewCacheAt: new Date().toISOString()
         }));
       },
       addHistory: (entry) => {
