@@ -43,6 +43,24 @@ async function request(path, options = {}) {
 export const backendApi = {
   getHealth: () => request("/"),
 
+  getContentOverview: () => request("/content/overview"),
+
+  getVideoDetail: (videoId) => request(`/content/videos/${videoId}`),
+
+  syncVideoComments: (videoId) =>
+    request(`/content/videos/${videoId}/sync-comments`, {
+      method: "POST"
+    }),
+
+  postReplyForComment: (commentId, { replyText = null, preferEditedReply = true } = {}) =>
+    request(`/content/comments/${commentId}/post-reply`, {
+      method: "POST",
+      body: JSON.stringify({
+        reply_text: replyText,
+        prefer_edited_reply: preferEditedReply
+      })
+    }),
+
   completeOAuth: (code) => request(`/auth/callback?code=${encodeURIComponent(code)}`),
 
   syncYoutube: ({ runRag = false } = {}) =>
