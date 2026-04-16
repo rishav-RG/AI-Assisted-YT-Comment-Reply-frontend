@@ -88,13 +88,14 @@ export default function VideoDetailPage() {
 
     try {
       const result = await backendApi.syncVideoComments(parsedVideoId);
+      const labeledCount = result?.labeled_count || 0;
       setPageNotice({
         kind: "ok",
-        label: `Synced ${result?.fetched || 0} comments (${result?.inserted || 0} new)`
+        label: `Synced ${result?.fetched || 0} comments (${result?.inserted || 0} new), labeled ${labeledCount}`
       });
       addHistory({
         type: "sync-video-comments",
-        summary: `Video ${parsedVideoId}: synced ${result?.fetched || 0} comments`
+        summary: `Video ${parsedVideoId}: synced ${result?.fetched || 0} comments, labeled ${labeledCount}`
       });
       await loadVideoDetail({ silent: true });
     } catch (apiError) {
