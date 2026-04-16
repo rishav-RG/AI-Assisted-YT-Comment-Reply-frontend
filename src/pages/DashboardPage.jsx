@@ -120,9 +120,11 @@ export default function DashboardPage() {
 
     try {
       const result = await backendApi.syncYoutube({ runRag: false });
+      const syncedVideos = Array.isArray(result?.videos) ? result.videos.length : 0;
+      const labeledTotal = result?.labeling?.total_labeled || 0;
       addHistory({
         type: "sync",
-        summary: `Full channel sync completed with ${Array.isArray(result?.videos) ? result.videos.length : 0} videos`
+        summary: `Full channel sync completed with ${syncedVideos} videos and ${labeledTotal} labeled comments`
       });
       await loadOverview({ silent: true });
     } catch (error) {
