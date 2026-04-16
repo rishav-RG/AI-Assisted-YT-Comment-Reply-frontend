@@ -15,6 +15,7 @@ import VideoDetailPage from "./pages/VideoDetailPage";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import { AppStateProvider } from "./state/AppStateProvider";
+import ScrollToTopButton from "./components/ScrollTop";
 
 const navItems = [
   { to: "/", label: "Home" },
@@ -143,6 +144,9 @@ function AppContent() {
             </NavLink>
           ))}
         </aside>
+        
+        {/* added scroll to top button */}
+        <ScrollToTopButton />
 
         <main className="content reveal">
           <Routes>
