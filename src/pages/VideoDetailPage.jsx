@@ -7,7 +7,7 @@ import { useAppState } from "../state/AppStateProvider";
 
 function getCommentStatus(comment) {
   if (comment?.is_creator) {
-    return { kind: "connected", label: "creator" };
+    return { kind: "connected", label: "CREATOR" };
   }
   if (comment?.spam_flag) {
     return { kind: "warning", label: "spam" };
@@ -242,9 +242,6 @@ export default function VideoDetailPage() {
         <p className="comment-text">{comment.comment_text || "No text"}</p>
 
         <div className="chip-list comment-chip-list">
-          <span className="chip">DB #{comment.id}</span>
-          <span className="chip">YT {comment.youtube_comment_id}</span>
-          <span className="chip">{comment.parent_comment_id ? "Reply" : "Top-level"}</span>
           <span className="chip">Intent: {comment.intent || "unknown"}</span>
           <span className="chip">Spam: {comment.spam_flag ? "yes" : "no"}</span>
         </div>
@@ -269,52 +266,53 @@ export default function VideoDetailPage() {
             {commentNotice ? <StatusPill status={commentNotice.kind} label={commentNotice.label} /> : null}
           </div>
         ) : (
-          <p className="helper-text">Creator-authored comment. Reply actions are hidden for this row.</p>
+          <p className="helper-text">Creator-authored comment. No reply action here.</p>
         )}
-
-        <div className="generated-reply-box" style={{ position: "relative" }}>
-          <p className="generated-reply-label" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span>Latest generated reply</span>
-            {!isEditing && (editedText ?? generatedText) ? (
-              <button
-                className="btn ghost"
-                style={{ fontSize: "0.9em", padding: "2px 8px" }}
-                onClick={handleEditClick}
-                disabled={busyGenerating || busyPosting}
-                title="Edit reply"
-              >
-                Edit
-              </button>
-            ) : null}
-          </p>
-          {isEditing ? (
-            <>
-              <textarea
-                value={replyToShow || ""}
-                onChange={handleEditChange}
-                rows={3}
-                style={{ width: "100%", resize: "vertical" }}
-                disabled={busyGenerating || busyPosting}
-                autoFocus
-              />
-              <div className="row" style={{ marginTop: 4 }}>
-                <button className="btn" onClick={handleSaveEdit} disabled={busyGenerating || busyPosting}>
-                  Save
+        {!comment.is_creator && (
+          <div className="generated-reply-box" style={{ position: "relative" }}>
+            <p className="generated-reply-label" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span>Latest generated reply</span>
+              {!isEditing && (editedText ?? generatedText) ? (
+                <button
+                  className="btn ghost"
+                  style={{ fontSize: "0.9em", padding: "2px 8px" }}
+                  onClick={handleEditClick}
+                  disabled={busyGenerating || busyPosting}
+                  title="Edit reply"
+                >
+                  Edit
                 </button>
-                <button className="btn ghost" onClick={handleCancelEdit} disabled={busyGenerating || busyPosting}>
-                  Cancel
-                </button>
-              </div>
-            </>
-          ) : (
-            <p>
-              {replyToShow || "No generated reply yet."}
-              {editedText && !isEditing ? (
-                <span style={{ marginLeft: 8, fontSize: "0.85em", color: "#888" }}>(edited)</span>
               ) : null}
             </p>
-          )}
-        </div>
+            {isEditing ? (
+              <>
+                <textarea
+                  value={replyToShow || ""}
+                  onChange={handleEditChange}
+                  rows={3}
+                  style={{ width: "100%", resize: "vertical" }}
+                  disabled={busyGenerating || busyPosting}
+                  autoFocus
+                />
+                <div className="row" style={{ marginTop: 4 }}>
+                  <button className="btn" onClick={handleSaveEdit} disabled={busyGenerating || busyPosting}>
+                    Save
+                  </button>
+                  <button className="btn ghost" onClick={handleCancelEdit} disabled={busyGenerating || busyPosting}>
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : (
+              <p>
+                {replyToShow || "No generated reply yet."}
+                {editedText && !isEditing ? (
+                  <span style={{ marginLeft: 8, fontSize: "0.85em", color: "#888" }}>(edited)</span>
+                ) : null}
+              </p>
+            )}
+          </div>
+        )}
       </article>
     );
   };
