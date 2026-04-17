@@ -52,6 +52,11 @@ export default function VideoDetailPage() {
   const [postingByCommentId, setPostingByCommentId] = useState({});
   const [commentNoticeById, setCommentNoticeById] = useState({});
 
+  // Store edited replies in local state (not persisted)
+  const [editedReplyByCommentId, setEditedReplyByCommentId] = useState({});
+  // Track which comment is in edit mode
+  const [editingReplyByCommentId, setEditingReplyByCommentId] = useState({});
+
   const [pageNotice, setPageNotice] = useState({ kind: "idle", label: "Ready" });
 
   const loadVideoDetail = async ({ silent = false } = {}) => {
@@ -160,7 +165,9 @@ export default function VideoDetailPage() {
   };
 
   const runPostReply = async (comment) => {
-    if (!getReplyText(comment)) {
+    // Use edited reply if present, else generated
+    const replyText = editedReplyByCommentId[comment.id] ?? getReplyText(comment);
+    if (!replyText) {
       setCommentNoticeById((prev) => ({
         ...prev,
         [comment.id]: { kind: "warning", label: "Generate a reply first" }
@@ -172,7 +179,8 @@ export default function VideoDetailPage() {
     setCommentNoticeById((prev) => ({ ...prev, [comment.id]: { kind: "running", label: "Posting to YouTube" } }));
 
     try {
-      const result = await backendApi.postReplyForComment(comment.id);
+      // Optionally: pass replyText to backend if API supports it, else just post
+      const result = await backendApi.postReplyForComment(comment.id, { replyText });
       setCommentNoticeById((prev) => ({
         ...prev,
         [comment.id]: { kind: "connected", label: `Posted ${result?.youtube_reply_comment_id || "successfully"}` }
@@ -198,6 +206,28 @@ export default function VideoDetailPage() {
     const busyPosting = Boolean(postingByCommentId[comment.id]);
     const canAct = Boolean(comment?.can_generate_reply);
     const commentNotice = commentNoticeById[comment.id];
+    const isEditing = !!editingReplyByCommentId[comment.id];
+    const editedText = editedReplyByCommentId[comment.id];
+
+    // The text to show in the reply box (edited or generated)
+    const replyToShow = isEditing ? editedText ?? generatedText : editedText ?? generatedText;
+
+    // Handlers for editing
+    const handleEditClick = () => {
+      setEditingReplyByCommentId((prev) => ({ ...prev, [comment.id]: true }));
+      setEditedReplyByCommentId((prev) => ({ ...prev, [comment.id]: editedText ?? generatedText }));
+    };
+    const handleCancelEdit = () => {
+      setEditingReplyByCommentId((prev) => ({ ...prev, [comment.id]: false }));
+      setEditedReplyByCommentId((prev) => ({ ...prev, [comment.id]: undefined }));
+    };
+    const handleSaveEdit = () => {
+      setEditingReplyByCommentId((prev) => ({ ...prev, [comment.id]: false }));
+      // Keep edited text in state
+    };
+    const handleEditChange = (e) => {
+      setEditedReplyByCommentId((prev) => ({ ...prev, [comment.id]: e.target.value }));
+    };
 
     return (
       <article key={comment.id} className={`comment-card ${nested ? "nested" : ""}`}>
@@ -231,7 +261,7 @@ export default function VideoDetailPage() {
             <button
               className="btn ghost"
               onClick={() => runPostReply(comment)}
-              disabled={busyGenerating || busyPosting || !generatedText}
+              disabled={busyGenerating || busyPosting || !(editedText ?? generatedText)}
               title={generatedText ? "Post generated reply" : "Generate a reply first"}
             >
               {busyPosting ? "Posting..." : "Post to YouTube"}
@@ -242,9 +272,48 @@ export default function VideoDetailPage() {
           <p className="helper-text">Creator-authored comment. Reply actions are hidden for this row.</p>
         )}
 
-        <div className="generated-reply-box">
-          <p className="generated-reply-label">Latest generated reply</p>
-          <p>{generatedText || "No generated reply yet."}</p>
+        <div className="generated-reply-box" style={{ position: "relative" }}>
+          <p className="generated-reply-label" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span>Latest generated reply</span>
+            {!isEditing && (editedText ?? generatedText) ? (
+              <button
+                className="btn ghost"
+                style={{ fontSize: "0.9em", padding: "2px 8px" }}
+                onClick={handleEditClick}
+                disabled={busyGenerating || busyPosting}
+                title="Edit reply"
+              >
+                Edit
+              </button>
+            ) : null}
+          </p>
+          {isEditing ? (
+            <>
+              <textarea
+                value={replyToShow || ""}
+                onChange={handleEditChange}
+                rows={3}
+                style={{ width: "100%", resize: "vertical" }}
+                disabled={busyGenerating || busyPosting}
+                autoFocus
+              />
+              <div className="row" style={{ marginTop: 4 }}>
+                <button className="btn" onClick={handleSaveEdit} disabled={busyGenerating || busyPosting}>
+                  Save
+                </button>
+                <button className="btn ghost" onClick={handleCancelEdit} disabled={busyGenerating || busyPosting}>
+                  Cancel
+                </button>
+              </div>
+            </>
+          ) : (
+            <p>
+              {replyToShow || "No generated reply yet."}
+              {editedText && !isEditing ? (
+                <span style={{ marginLeft: 8, fontSize: "0.85em", color: "#888" }}>(edited)</span>
+              ) : null}
+            </p>
+          )}
         </div>
       </article>
     );
@@ -252,6 +321,12 @@ export default function VideoDetailPage() {
 
   const threads = detail?.threads || [];
   const orphanReplies = detail?.orphan_replies || [];
+
+  // Reset edited replies and edit mode when detail changes (e.g., after sync)
+  useEffect(() => {
+    setEditedReplyByCommentId({});
+    setEditingReplyByCommentId({});
+  }, [detail?.video?.id]);
 
   const summary = useMemo(() => {
     const stats = detail?.stats || {};
