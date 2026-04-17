@@ -84,10 +84,10 @@ function AppContent() {
       <header className="app-header reveal">
         <div className="header-top">
           <div>
-            <p className="eyebrow">React Control Panel</p>
-            <h1>YouTube Reply Ops</h1>
+            <p className="eyebrow">AI Reply Platform</p>
+            <h1>YouTube Comment Assistant</h1>
             <p className="subtitle">
-              OAuth connect, sync channel data, and run RAG reply generation against the existing FastAPI backend.
+              Centralize your YouTube comment management, automate responses, and boost engagement.
             </p>
           </div>
 
@@ -144,7 +144,7 @@ function AppContent() {
             </NavLink>
           ))}
         </aside>
-        
+
         {/* added scroll to top button */}
         <ScrollToTopButton />
 
