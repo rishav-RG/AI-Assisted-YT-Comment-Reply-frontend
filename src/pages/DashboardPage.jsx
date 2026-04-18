@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaYoutube } from "react-icons/fa";
-import { backendApi } from "../api/backendApi";
+import { useAuthenticatedApi, initiateYouTubeOAuth } from "../api/backendApi";
 import StatCard from "../components/StatCard";
 import StatusPill from "../components/StatusPill";
 import { useAppState } from "../state/AppStateProvider";
@@ -65,6 +65,8 @@ export default function DashboardPage() {
     processed_comment_count: 0
   };
 
+  const api = useAuthenticatedApi();
+
   const loadOverview = async ({ silent = false } = {}) => {
     if (!silent) {
       setLoadingOverview(true);
@@ -73,7 +75,7 @@ export default function DashboardPage() {
     setOverviewError("");
 
     try {
-      const payload = await backendApi.getContentOverview();
+      const payload = await api("/content/overview");
       setOverview(payload);
       setOverviewCache(payload);
       return payload;
@@ -119,7 +121,9 @@ export default function DashboardPage() {
     setOverviewError("");
 
     try {
-      const result = await backendApi.syncYoutube({ runRag: false });
+      const result = await api(`/youtube/sync?run_rag=false`, {
+        method: "POST",
+      });
       const syncedVideos = Array.isArray(result?.videos) ? result.videos.length : 0;
       const labeledTotal = result?.labeling?.total_labeled || 0;
       addHistory({
@@ -197,6 +201,14 @@ export default function DashboardPage() {
     return { kind: "ok", label: "Data ready" };
   }, [overviewError, loadingOverview, refreshingOverview, syncingAllVideos, channel, overview?.videos]);
 
+  const connectYouTube = () => {
+  window.open(
+    "http://localhost:8000/auth/youtube",
+    "youtube-oauth",
+    "width=500,height=600"
+  );
+};
+
   return (
     <section className="page overview-page">
       <header className="page-header overview-hero">
@@ -209,6 +221,9 @@ export default function DashboardPage() {
         <div className="row">
           <button className="btn" onClick={syncChannelData} disabled={syncingAllVideos}>
             {syncingAllVideos ? "Syncing channel..." : "Sync latest channel data"}
+          </button>
+          <button className="btn" onClick={connectYouTube}>  {/* add this */}
+            Connect YouTube
           </button>
           <button className="btn ghost" onClick={refreshOverview} disabled={refreshingOverview || syncingAllVideos}>
             {refreshingOverview ? "Refreshing..." : "Refresh list"}

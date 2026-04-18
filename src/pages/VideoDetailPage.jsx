@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-import { backendApi } from "../api/backendApi";
+import { useAuthenticatedApi } from "../api/backendApi";
 import StatusPill from "../components/StatusPill";
 import { useAppState } from "../state/AppStateProvider";
 
@@ -59,6 +59,8 @@ export default function VideoDetailPage() {
 
   const [pageNotice, setPageNotice] = useState({ kind: "idle", label: "Ready" });
 
+  const api = useAuthenticatedApi();
+
   const loadVideoDetail = async ({ silent = false } = {}) => {
     if (!Number.isInteger(parsedVideoId) || parsedVideoId <= 0) {
       setError("Video ID is invalid.");
@@ -72,7 +74,7 @@ export default function VideoDetailPage() {
     setError("");
 
     try {
-      const payload = await backendApi.getVideoDetail(parsedVideoId);
+      const payload = await api(`/content/videos/${parsedVideoId}`);
       setDetail(payload);
     } catch (apiError) {
       setError(apiError?.message || "Failed to load video detail");
@@ -92,7 +94,7 @@ export default function VideoDetailPage() {
     setPageNotice({ kind: "running", label: "Syncing latest comments" });
 
     try {
-      const result = await backendApi.syncVideoComments(parsedVideoId);
+      const result = await api(`/content/videos/${parsedVideoId}/sync-comments`, { method: "POST" });
       const labeledCount = result?.labeled_count || 0;
       setPageNotice({
         kind: "ok",
@@ -117,7 +119,10 @@ export default function VideoDetailPage() {
     setPageNotice({ kind: "running", label: "Generating replies for unanswered comments" });
 
     try {
-      const result = await backendApi.generateForVideo(parsedVideoId, { forceRegenerate: false });
+      const result = await api(`/rag/generate/video/${parsedVideoId}`, {
+        method: "POST",
+        body: JSON.stringify({ force_regenerate: false, top_k: null }),
+      });
       const summary = result?.summary || {};
 
       setPageNotice({
@@ -143,7 +148,10 @@ export default function VideoDetailPage() {
     setCommentNoticeById((prev) => ({ ...prev, [comment.id]: { kind: "running", label: "Generating" } }));
 
     try {
-      const result = await backendApi.generateForComment(comment.id, { forceRegenerate: false });
+      const result = await api(`/rag/generate/comment/${comment.id}`, {
+        method: "POST",
+        body: JSON.stringify({ force_regenerate: false, top_k: null }),
+      });
       const status = result?.result?.status || "generated";
 
       setCommentNoticeById((prev) => ({
@@ -180,7 +188,10 @@ export default function VideoDetailPage() {
 
     try {
       // Optionally: pass replyText to backend if API supports it, else just post
-      const result = await backendApi.postReplyForComment(comment.id, { replyText });
+      const result = await api(`/content/comments/${comment.id}/post-reply`, {
+        method: "POST",
+        body: JSON.stringify({ reply_text: replyText, prefer_edited_reply: true }),
+      });
       setCommentNoticeById((prev) => ({
         ...prev,
         [comment.id]: { kind: "connected", label: `Posted ${result?.youtube_reply_comment_id || "successfully"}` }
