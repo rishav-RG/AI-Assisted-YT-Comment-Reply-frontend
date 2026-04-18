@@ -639,13 +639,17 @@ h1 {
 
 .video-card-actions {
   display: flex;
-  gap: 0.45rem;
-  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-.video-card-actions .btn {
-  flex: 1;
-  min-width: 120px;
+.video-card-actions .btn,
+.video-card-actions a.btn {
+  width: auto;
+  min-width: 0;
+  flex: 0 0 auto;
 }
 
 .error-inline {
@@ -871,17 +875,25 @@ input:focus {
 .chip-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 0.6rem;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .chip {
-  padding: 0.3rem 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 999px;
-  border: 1px solid #d6d0c0;
-  background: #f8f7f2;
+  background: #f5f2e9;
+  color: #212226;
+  font-size: 0.92rem;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 0.83rem;
+  padding: 0.28rem 1.1rem;
+  min-width: 110px;
+  text-align: center;
+  border: 1px solid var(--line);
+  white-space: nowrap;
+  font-weight: 500;
 }
 
 .stack-list {
@@ -1246,4 +1258,179 @@ body[data-theme="dark"] .metric {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* HomePage Vertical Workflow Journey */
+.home-workflow-journey {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Reduced gap between steps */
+  padding: 2rem 0;
+  max-width: 1100px; /* Increased width */
+  margin: 0 auto;
+}
+
+.home-workflow-journey::before {
+  content: "";
+  position: absolute;
+  top: 40px;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background: var(--line);
+  z-index: 0;
+}
+
+.home-workflow-step {
+  display: flex;
+  align-items: center; /* Centered items vertically */
+  gap: 2rem; /* Reduced gap between icon and text */
+  position: relative;
+  width: 50%;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+}
+
+.home-workflow-step:nth-child(odd) {
+  align-self: flex-start;
+  padding-right: 2.5rem; /* Adjusted padding */
+  justify-content: flex-end;
+}
+
+.home-workflow-step:nth-child(even) {
+  align-self: flex-end;
+  padding-left: 2.5rem; /* Adjusted padding */
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.home-workflow-icon {
+  flex-shrink: 0;
+  width: 60px; /* Slightly smaller icon */
+  height: 60px; /* Slightly smaller icon */
+  border-radius: 999px;
+  background: var(--surface-strong);
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 1.5rem; /* Adjusted icon size */
+  z-index: 1;
+  transition: all 0.2s ease-out;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.home-workflow-step:nth-child(odd) .home-workflow-icon {
+  right: 0;
+  transform: translateY(-50%) translateX(calc(50% + 1.25rem));
+}
+
+.home-workflow-step:nth-child(even) .home-workflow-icon {
+  left: 0;
+  transform: translateY(-50%) translateX(calc(-50% - 1.25rem));
+}
+
+.home-workflow-step:hover .home-workflow-icon {
+  transform: scale(1.05) translateY(-50%)
+    translateX(var(--translateX, calc(50% + 1.25rem)));
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(13, 107, 111, 0.2);
+}
+
+.home-workflow-step:nth-child(even):hover .home-workflow-icon {
+  --translateX: calc(-50% - 1.25rem);
+}
+
+body[data-theme="dark"] .home-workflow-step:hover .home-workflow-icon {
+  box-shadow: 0 0 25px rgba(75, 179, 255, 0.2);
+}
+
+.home-workflow-content {
+  padding-top: 0; /* Removed padding */
+  width: 100%;
+}
+
+.home-workflow-content h4 {
+  margin: 0 0 0.25rem;
+  font-size: 1.15rem; /* Adjusted font size */
+}
+
+.home-workflow-content p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+/* HomePage FAQ Section Adjustments */
+.home-faq {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 2.5rem;
+  margin-top: 4rem;
+  margin-bottom: 8rem;
+  width: 90%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.faq-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.faq-question {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 0.5rem;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.faq-question svg {
+  font-size: 0.9rem;
+  color: var(--accent);
+  transition: transform 0.2s ease-in-out;
+}
+
+.faq-answer {
+  overflow: hidden;
+}
+
+.faq-answer p {
+  padding: 0 0.5rem 1.25rem;
+  margin: 0;
+  color: var(--muted);
+  max-width: 75ch;
+  line-height: 1.6;
 }

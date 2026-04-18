@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-
+import { FaYoutube } from "react-icons/fa";
 import { useAuthenticatedApi, initiateYouTubeOAuth } from "../api/backendApi";
 import StatCard from "../components/StatCard";
 import StatusPill from "../components/StatusPill";
@@ -124,9 +124,11 @@ export default function DashboardPage() {
       const result = await api(`/youtube/sync?run_rag=false`, {
         method: "POST",
       });
+      const syncedVideos = Array.isArray(result?.videos) ? result.videos.length : 0;
+      const labeledTotal = result?.labeling?.total_labeled || 0;
       addHistory({
         type: "sync",
-        summary: `Full channel sync completed with ${Array.isArray(result?.videos) ? result.videos.length : 0} videos`
+        summary: `Full channel sync completed with ${syncedVideos} videos and ${labeledTotal} labeled comments`
       });
       await loadOverview({ silent: true });
     } catch (error) {
@@ -328,10 +330,11 @@ export default function DashboardPage() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Open on YouTube
+                  <span style={{ paddingRight: "1rem" }}>Open</span>
+                  <FaYoutube style={{ color: "red", fontSize: "24px" }} />
                 </a>
                 <Link className="btn" to={`/videos/${video.id}`}>
-                  Open Video Thread
+                  Open Thread
                 </Link>
               </div>
             </article>
