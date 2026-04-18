@@ -1,20 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
 
-import { backendApi, OAUTH_MESSAGE_SOURCE } from "../api/backendApi";
+import { useAuthenticatedApi, OAUTH_MESSAGE_SOURCE } from "../api/backendApi";
 import StatusPill from "../components/StatusPill";
 
 function sendCallbackResult(payload) {
-  if (!window.opener || window.opener.closed) {
-    return;
-  }
+  if (!window.opener || window.opener.closed) return;
 
   window.opener.postMessage(
-    {
-      source: OAUTH_MESSAGE_SOURCE,
-      type: "oauth-complete",
-      ...payload
-    },
+    { source: OAUTH_MESSAGE_SOURCE, type: "oauth-complete", ...payload },
     window.location.origin
   );
 }
@@ -22,10 +17,15 @@ function sendCallbackResult(payload) {
 export default function OAuthCallbackPage() {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState({ kind: "running", label: "Processing OAuth callback..." });
-  const [details, setDetails] = useState("Exchanging authorization code with backend.");
+  const [details, setDetails] = useState("Waiting for authentication...");
+  const api = useAuthenticatedApi();
+  const hasRun = useRef(false);
+  const { isLoaded, userId } = useAuth();  // added
 
   useEffect(() => {
-    let cancelled = false;
+    if (!isLoaded || !userId) return;
+    if (hasRun.current) return;
+    hasRun.current = true;
 
     async function handleCallback() {
       const oauthError = searchParams.get("error");
@@ -47,24 +47,15 @@ export default function OAuthCallbackPage() {
         return;
       }
 
+      setDetails("Exchanging authorization code with backend.");
+
       try {
-        const result = await backendApi.completeOAuth(code);
-        if (cancelled) {
-          return;
-        }
+        const result = await api(`/auth/callback?code=${encodeURIComponent(code)}`);
 
         setStatus({ kind: "ok", label: "YouTube connected" });
-        setDetails(`Backend response: ${result?.status || "connected"}. This window will close automatically.`);
+        setDetails("YouTube connected successfully. You can now close this window.");
         sendCallbackResult({ ok: true, result });
-
-        window.setTimeout(() => {
-          window.close();
-        }, 900);
       } catch (error) {
-        if (cancelled) {
-          return;
-        }
-
         const message = error?.message || "OAuth callback exchange failed.";
         setStatus({ kind: "error", label: "Backend exchange failed" });
         setDetails(message);
@@ -73,11 +64,7 @@ export default function OAuthCallbackPage() {
     }
 
     handleCallback();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [searchParams]);
+  }, [isLoaded, userId, searchParams]);
 
   return (
     <section className="oauth-callback-page">
