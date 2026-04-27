@@ -1,9 +1,24 @@
-const API_PREFIX = import.meta.env.VITE_API_PREFIX || "/api";
+const API_PREFIX = (import.meta.env.VITE_API_PREFIX || "").trim();
+const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || "")
+  .trim()
+  .replace(/\/+$/, "");
 export const OAUTH_MESSAGE_SOURCE = "yt-reply-frontend";
 import { useAuth } from "@clerk/clerk-react";
 
+function normalizePrefix(prefix) {
+  if (!prefix) {
+    return "";
+  }
+
+  const withLeadingSlash = prefix.startsWith("/") ? prefix : `/${prefix}`;
+  return withLeadingSlash.replace(/\/+$/, "");
+}
+
 function buildUrl(path) {
-  return `${API_PREFIX}${path}`;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const fullPath = `${normalizePrefix(API_PREFIX)}${normalizedPath}`;
+
+  return BACKEND_URL ? `${BACKEND_URL}${fullPath}` : fullPath;
 }
 
 async function request(path, options = {}, auth = {}) {
@@ -107,7 +122,6 @@ export const backendApi = {
     }),
 };
 
-
 export const useAuthenticatedApi = () => {
   const { getToken, userId, isLoaded } = useAuth();
 
@@ -127,8 +141,8 @@ export const useAuthenticatedApi = () => {
   return makeRequest;
 };
 
+export const getYouTubeOAuthUrl = () => buildUrl("/auth/youtube");
 
 export const initiateYouTubeOAuth = () => {
-  // to navigate the browser directly to redirect url.
-  window.location.href = `${API_PREFIX}/auth/youtube`;
+  window.location.href = getYouTubeOAuthUrl();
 };

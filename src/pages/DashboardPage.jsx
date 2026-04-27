@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaYoutube } from "react-icons/fa";
-import { useAuthenticatedApi, initiateYouTubeOAuth } from "../api/backendApi";
+import { useAuthenticatedApi, getYouTubeOAuthUrl } from "../api/backendApi";
 import StatCard from "../components/StatCard";
 import StatusPill from "../components/StatusPill";
 import { useAppState } from "../state/AppStateProvider";
@@ -202,12 +202,8 @@ export default function DashboardPage() {
   }, [overviewError, loadingOverview, refreshingOverview, syncingAllVideos, channel, overview?.videos]);
 
   const connectYouTube = () => {
-  window.open(
-    "http://localhost:8000/auth/youtube",
-    "youtube-oauth",
-    "width=500,height=600"
-  );
-};
+    window.open(getYouTubeOAuthUrl(), "youtube-oauth", "width=500,height=600");
+  };
 
   return (
     <section className="page overview-page">
